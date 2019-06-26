@@ -1,12 +1,12 @@
 import json
 import os
-from solc import compile_standard
+from solcx import compile_standard
 from pathlib import Path
-
 
 """
 Created by Kelvin Fichter. Code lifted from omisego/plasma-contracts by Paul Peregud and moved into separate package.
 """
+
 
 class Builder(object):
 
@@ -109,6 +109,7 @@ class Builder(object):
         bytecode = contract_data['evm']['bytecode']['object']
 
         return abi, bytecode
+
 
 def main():
     import argparse
