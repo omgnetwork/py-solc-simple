@@ -8,7 +8,7 @@ setuptools.setup(
     version="0.0.13",
     author="Paul Peregud",
     author_email="paulperegud@gmail.com",
-    description="Simple wrapper around py-solc. Needs solc binary in PATH",
+    description="Simple wrapper around py-solc-x. Needs solc binary in PATH",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/omisego/py-solc-simple",
@@ -23,6 +23,6 @@ setuptools.setup(
         'console_scripts': ['py-solc-simple=solc_simple.builder:main'],
     },
     install_requires=[
-        'py-solc==3.2.0'
+        'py-solc-x==0.4.0'
     ]
 )

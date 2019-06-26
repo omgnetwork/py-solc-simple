@@ -1,6 +1,6 @@
 import json
 import os
-from solc import compile_standard
+from solcx import compile_standard
 from pathlib import Path
 
 
