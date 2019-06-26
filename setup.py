@@ -19,10 +19,15 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ),
-    entry_points = {
+    entry_points={
         'console_scripts': ['py-solc-simple=solc_simple.builder:main'],
     },
     install_requires=[
         'py-solc-x==0.4.0'
-    ]
+    ],
+    extras_require={
+        'test': [
+            "pytest>=4.4.0"
+        ]
+    }
 )
