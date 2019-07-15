@@ -10,7 +10,7 @@ Created by Kelvin Fichter. Code lifted from omisego/plasma-contracts by Paul Per
 
 class Builder(object):
 
-    def __init__(self, contracts_dir, output_dir):
+    def __init__(self, contracts_dir, output_dir=None):
         self.contracts_dir = contracts_dir
         self.output_dir = output_dir
 
@@ -77,19 +77,9 @@ class Builder(object):
         real_path = os.path.realpath(self.contracts_dir)
         compilation_result = compile_standard(solc_input, allow_paths=real_path)
 
-        # Create the output folder if it doesn't already exist
-        os.makedirs(self.output_dir, exist_ok=True)
+        self.__save_compilation_result_to_files(compilation_result)
 
-        # Write the contract ABI to output files
-        compiled_contracts = compilation_result['contracts']
-        for contract_file in compiled_contracts:
-            for contract in compiled_contracts[contract_file]:
-                contract_name = contract.split('.')[0]
-                contract_data = compiled_contracts[contract_file][contract_name]
-
-                contract_data_path = self.output_dir + '/{0}.json'.format(contract_name)
-                with open(contract_data_path, "w+") as contract_data_file:
-                    json.dump(contract_data, contract_data_file)
+        return compilation_result
 
     def get_contract_data(self, contract_name):
         """Returns the contract data for a given contract
@@ -109,6 +99,25 @@ class Builder(object):
         bytecode = contract_data['evm']['bytecode']['object']
 
         return abi, bytecode
+
+    def __save_compilation_result_to_files(self, compilation_result):
+
+        if not self.output_dir:
+            return
+
+        # Create the output folder if it doesn't already exist
+        os.makedirs(self.output_dir, exist_ok=True)
+
+        # Write the contract ABI to output files
+        compiled_contracts = compilation_result['contracts']
+        for contract_file in compiled_contracts:
+            for contract in compiled_contracts[contract_file]:
+                contract_name = contract.split('.')[0]
+                contract_data = compiled_contracts[contract_file][contract_name]
+
+                contract_data_path = self.output_dir + '/{0}.json'.format(contract_name)
+                with open(contract_data_path, "w+") as contract_data_file:
+                    json.dump(contract_data, contract_data_file)
 
 
 def main():
