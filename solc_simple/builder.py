@@ -1,6 +1,6 @@
 import json
 import os
-from solcx import compile_standard
+from solcx import compile_files
 from pathlib import Path
 
 """
@@ -31,39 +31,10 @@ class Builder(object):
             symlink = Path(path).is_symlink()
             return dotsol and (not (symlink or hidden or notfile))
 
-        solc_input = {
-            'language': 'Solidity',
-            'sources': {
-                file_name: {
-                    'urls': [os.path.realpath(os.path.join(r, file_name))]
-                } for r, d, f in os.walk(self.contracts_dir) for file_name in f if legal(r, file_name)
-            },
-            'settings': {
-                'optimizer': {
-                    'enabled': 1,
-                    'runs': 10000
-                },
-                'outputSelection': {
-                    "*": {
-                        "": [
-                            "legacyAST",
-                            "ast"
-                        ],
-                        "*": [
-                            "abi",
-                            "evm.bytecode.object",
-                            "evm.bytecode.sourceMap",
-                            "evm.deployedBytecode.object",
-                            "evm.deployedBytecode.sourceMap"
-                        ]
-                    }
-                }
-            }
-        }
+        return [os.path.realpath(os.path.join(r, file_name)) for r, d, f in os.walk(self.contracts_dir) for file_name
+                in f if legal(r, file_name)]
 
-        return solc_input
-
-    def compile_all(self):
+    def compile_all(self, **kwargs):
         """Compiles all of the contracts in the self.contracts_dir directory
 
         Creates {contract name}.json files in self.output_dir that contain
@@ -74,22 +45,19 @@ class Builder(object):
         solc_input = self.get_solc_input()
 
         # Compile the contracts
-        real_path = os.path.realpath(self.contracts_dir)
-        compilation_result = compile_standard(solc_input, allow_paths=real_path)
+        result = compile_files(solc_input, **kwargs)
 
         # Create the output folder if it doesn't already exist
         os.makedirs(self.output_dir, exist_ok=True)
 
         # Write the contract ABI to output files
-        compiled_contracts = compilation_result['contracts']
-        for contract_file in compiled_contracts:
-            for contract in compiled_contracts[contract_file]:
-                contract_name = contract.split('.')[0]
-                contract_data = compiled_contracts[contract_file][contract_name]
+        for contract in result:
+            contract_name = contract.split(':')[1]
+            contract_data = result[contract]
 
-                contract_data_path = self.output_dir + '/{0}.json'.format(contract_name)
-                with open(contract_data_path, "w+") as contract_data_file:
-                    json.dump(contract_data, contract_data_file)
+            contract_data_path = self.output_dir + '/{0}.json'.format(contract_name)
+            with open(contract_data_path, "w+") as contract_data_file:
+                json.dump(contract_data, contract_data_file, indent=2, sort_keys=True)
 
     def get_contract_data(self, contract_name):
         """Returns the contract data for a given contract
