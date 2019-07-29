@@ -74,7 +74,7 @@ class Builder(object):
             contract_data = json.load(contract_data_file)
 
         abi = contract_data['abi']
-        bytecode = contract_data['evm']['bytecode']['object']
+        bytecode = contract_data['bin']
 
         return abi, bytecode
 
