@@ -41,7 +41,7 @@ class Builder(object):
             'settings': {
                 'optimizer': {
                     'enabled': 1,
-                    'runs': 10000
+                    'runs': 200
                 },
                 'outputSelection': {
                     "*": {
