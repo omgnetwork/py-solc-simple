@@ -23,7 +23,7 @@ setuptools.setup(
         'console_scripts': ['py-solc-simple=solc_simple.builder:main'],
     },
     install_requires=[
-        'py-solc-x==0.4.0'
+        'py-solc-x==0.10.1'
     ],
     extras_require={
         'test': [
